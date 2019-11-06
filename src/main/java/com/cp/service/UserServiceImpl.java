@@ -57,6 +57,7 @@ public class UserServiceImpl implements UserService {
 	public Login findUserByNameandPassword(Login login) {
 		 
 	Login login1 = userRepository.findUserByNameandPassword(login);
+	System.out.println("getting login details" +login);
 	return login1;
 	
 	}

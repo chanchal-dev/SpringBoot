@@ -17,6 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.cp.model.Login;
 import com.cp.model.User;
 import com.cp.repository.UserRepository;
 import com.cp.service.UserService;
@@ -82,7 +83,13 @@ public class SpringBootExampleApplicationTests {
 	}
 	
 	
-	
+	@Test
+	public void findUserByNameandPassword()
+	{
+		Login login = new Login("chanchal", "chinki@345");
+		when(userRepository.findUserByNameandPassword(login)).thenReturn(login);
+		assertEquals(login, userService.findUserByNameandPassword(login));
+	}
 	
 	
 }
