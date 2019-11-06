@@ -3,6 +3,7 @@ package com.cp.controller;
 
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -19,14 +20,14 @@ import com.cp.model.Login;
 import com.cp.model.User;
 import com.cp.service.UserService;
 
+
 @RestController
 public class UserController {
-
+	
+	static Logger logger = Logger.getLogger(UserController.class);
 	@Autowired
 	private UserService userService;
-
-//-------------------------------savedata--------------------------------
-
+	
 //---------------------------------getall-------------------------------
 	@RequestMapping(value = "/getAll/", method = RequestMethod.GET)
 	public ResponseEntity<List<User>> findAllUser() {
@@ -40,10 +41,12 @@ public class UserController {
 	}
 
 //------------------------------------getdatabyid-----------------------
-	@RequestMapping(value = "/getById/{id}", method = RequestMethod.POST)
-	public ResponseEntity<List<User>> findUserById(@PathVariable("id") int id, @RequestBody User user) {
+	@RequestMapping(value = "/getById/{id}", method = RequestMethod.GET)
+	public ResponseEntity<List<User>> findUserById(@PathVariable("id") int id) {
+		logger.info("fetching user with id{}");
 		List<User> user1 = userService.findUserById(id);
 		if (user1 == null) {
+			logger.error("user id {} not found.");
 			return new ResponseEntity<List<User>>(HttpStatus.NOT_FOUND);
 
 		}
@@ -54,9 +57,12 @@ public class UserController {
 	@RequestMapping(value = "/update/{id}", method = RequestMethod.PUT)
 	public ResponseEntity<User> updateUserById(@PathVariable("id") int id, @RequestBody User user) {
 		user.setId(id);
+		logger.info("updating user with id{}");
 		User user1 = userService.updateUserById(user);
 
 		if (user1 == null) {
+			
+			logger.error("unable to update. User with id {} not found.");
 
 			return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
 		}
@@ -76,9 +82,12 @@ public class UserController {
 
 	@RequestMapping(value = "/deleteById/{id}", method = RequestMethod.DELETE)
 	public ResponseEntity<User> deleteUserById(@PathVariable("id") int id) {
+		logger.info("fetching & deleting user with id{}");
 
 		List<User> user1 = userService.findUserById(id);
 		if (user1 == null) {
+			
+			logger.error("unable to delete. User with id {} not found");
 			return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
 
 		}
@@ -92,11 +101,13 @@ public class UserController {
 //---------------------------register---------------------------------------
 	@RequestMapping(value = "/register/", method = RequestMethod.POST)
 	public ResponseEntity<User> saveUser(@RequestBody User user) {
+		logger.info("user sucessfully registerd");
 		User user1 = userService.saveUser(user);
 
-		System.out.println("user created" + user);
+	
 
 		if (user1 != null) {
+		
 			user1.setFirstname(user.getFirstname());
 			user1.setLastname(user.getLastname());
 			user1.setUsername(user.getUsername());
@@ -112,6 +123,7 @@ public class UserController {
 //----------------------------login----------------------------------
 	@RequestMapping(value = "/login/", method = RequestMethod.POST)
 	public ResponseEntity<Login> findUserByNameandPassword(@RequestBody Login login) {
+		logger.info("user successfully login");
 		Login login1 = userService.findUserByNameandPassword(login);
 
 		if (login1 != null) {
@@ -119,8 +131,10 @@ public class UserController {
 			login.setPassword(login.getPassword());
 
 		}
+		
 
 		return new ResponseEntity<Login>(login1, HttpStatus.OK);
+		
 
 	}
 
